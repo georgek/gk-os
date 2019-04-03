@@ -1,14 +1,17 @@
 /* gk-os */
 
-#include "uart.h"
+#include "kio.h"
+
+/* this function does any hardware initialisation */
+extern void init();
 
 void main()
 {
-     uart_init();
+     init();
 
-     uart_puts("Hello, world\n");
+     kprintf("Hello, world... I did things\n");
 
      while(1) {
-          uart_send(uart_getc());
+          kputc(kgetc());
      }
 }

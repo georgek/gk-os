@@ -1,8 +1,9 @@
 # gk-os
 
-SRCS = $(wildcard *.c)
+SRCS = $(wildcard *.c) $(wildcard */*.c)
 OBJS = $(SRCS:.c=.o)
 CFLAGS = -Wall -O0 -ffreestanding -nostdinc -nostdlib -nostartfiles
+VPATH = raspi
 
 all: kernel8.img
 

@@ -1,12 +1,13 @@
 /* gk-os
- *
- * mini-uart
- *
- * */
+
+ does basic initialisation for raspberry pi
+
+*/
 
 #include "gpio.h"
 #include "aux.h"
 
+/* initialise the mini-uart and set GPIO pins 14 and 15 to use it */
 void uart_init()
 {
      register unsigned int r;
@@ -36,34 +37,7 @@ void uart_init()
      *AUX_MU_CNTL = 3;          /* enable Tx, Rx */
 }
 
-void uart_send(char c)
+void init()
 {
-     /* wait to send */
-     do {
-          asm volatile("nop");
-     } while(!(*AUX_MU_LSR & 0x20));
-     *AUX_MU_IO = (unsigned int) c;
-}
-
-char uart_getc()
-{
-     char c;
-     /* wait until something is in buffer */
-     do {
-          asm volatile("nop");
-     } while(!(*AUX_MU_LSR & 0x01));
-     c = (char)(*AUX_MU_IO);
-     /* convert carriage return to newline */
-     return c == '\r' ? '\n' : c;
-}
-
-void uart_puts(char *s)
-{
-     while (*s) {
-          /* convert lf to crlf */
-          if (*s == '\n') {
-               uart_send('\r');
-          }
-          uart_send(*s++);
-     }
+     uart_init();
 }
