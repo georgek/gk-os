@@ -6,10 +6,23 @@
 /* this function does any hardware initialisation */
 extern void init();
 
+void vanity()
+{
+     kprintf("\n"
+"       _\n"
+"  __ _| | __      ___  ___\n"
+" / _` | |/ /____ / _ \\/ __|\n"
+"| (_| |   <_____| (_) \\__ \\\n"
+" \\__, |_|\\_\\     \\___/|___/\n"
+" |___/\n\n");
+}
+
 void main()
 {
      unsigned long serial;
      init();
+
+     vanity();
 
      serial = mbox_req_single_tag();
 
