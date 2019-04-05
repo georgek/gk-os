@@ -21,17 +21,17 @@
 /* mailbox registers */
 #define VIDEOCORE_MBOX  (MMIO_BASE+0x0000B880)
 /* mailbox 0 is to RECIEVE from the videocore */
-#define MBOX_0_RW       ((volatile unsigned int*)(VIDEOCORE_MBOX+0x0))
-#define MBOX_0_PEEK     ((volatile unsigned int*)(VIDEOCORE_MBOX+0x10))
-#define MBOX_0_SENDER   ((volatile unsigned int*)(VIDEOCORE_MBOX+0x14))
-#define MBOX_0_STATUS   ((volatile unsigned int*)(VIDEOCORE_MBOX+0x18))
-#define MBOX_0_CONFIG   ((volatile unsigned int*)(VIDEOCORE_MBOX+0x1C))
+#define MBOX_0_RW       ((unsigned int volatile *)(VIDEOCORE_MBOX+0x0))
+#define MBOX_0_PEEK     ((unsigned int volatile *)(VIDEOCORE_MBOX+0x10))
+#define MBOX_0_SENDER   ((unsigned int volatile *)(VIDEOCORE_MBOX+0x14))
+#define MBOX_0_STATUS   ((unsigned int volatile *)(VIDEOCORE_MBOX+0x18))
+#define MBOX_0_CONFIG   ((unsigned int volatile *)(VIDEOCORE_MBOX+0x1C))
 /* mailbox 1 is to SEND to the videocore */
-#define MBOX_1_RW       ((volatile unsigned int*)(VIDEOCORE_MBOX+0x20))
-#define MBOX_1_PEEK     ((volatile unsigned int*)(VIDEOCORE_MBOX+0x30))
-#define MBOX_1_SENDER   ((volatile unsigned int*)(VIDEOCORE_MBOX+0x34))
-#define MBOX_1_STATUS   ((volatile unsigned int*)(VIDEOCORE_MBOX+0x38))
-#define MBOX_1_CONFIG   ((volatile unsigned int*)(VIDEOCORE_MBOX+0x3C))
+#define MBOX_1_RW       ((unsigned int volatile *)(VIDEOCORE_MBOX+0x20))
+#define MBOX_1_PEEK     ((unsigned int volatile *)(VIDEOCORE_MBOX+0x30))
+#define MBOX_1_SENDER   ((unsigned int volatile *)(VIDEOCORE_MBOX+0x34))
+#define MBOX_1_STATUS   ((unsigned int volatile *)(VIDEOCORE_MBOX+0x38))
+#define MBOX_1_CONFIG   ((unsigned int volatile *)(VIDEOCORE_MBOX+0x3C))
 
 #define MBOX_FULL       0x80000000
 #define MBOX_EMPTY      0x40000000
@@ -41,22 +41,6 @@
 
 #define MBOX_REQUEST    0
 
-/* channels */
-#define MBOX_CH_POWER   0
-#define MBOX_CH_FB      1
-#define MBOX_CH_VUART   2
-#define MBOX_CH_VCHIQ   3
-#define MBOX_CH_LEDS    4
-#define MBOX_CH_BTNS    5
-#define MBOX_CH_TOUCH   6
-#define MBOX_CH_COUNT   7
-#define MBOX_CH_PROP    8
-
-/* tags */
-#define MBOX_TAG_GETSERIAL      0x10004
-#define MBOX_TAG_LAST           0
-
-
 
 /* static message buffer for mailbox communication */
 struct {
@@ -65,25 +49,67 @@ struct {
      unsigned int tags[34];
 } volatile __attribute__((aligned(16))) mbox_buf;
 
+sysinfo_t sysinfo;
 
-unsigned long mbox_req_single_tag(unsigned int tag)
+sysinfo_t *mbox_sysinfo(unsigned int tag)
 {
-     unsigned long ret;
-
-     mbox_buf.buf_size = 8*4;
+     mbox_buf.buf_size = 35*4;
      mbox_buf.req_code = MBOX_REQUEST;
      /* sequence of tags */
-     mbox_buf.tags[0] = MBOX_TAG_GETSERIAL; /* tag identifier */
-     mbox_buf.tags[1] = 8;                  /* value buffer size (bytes) */
-     mbox_buf.tags[2] = 0;                  /* request code */
+     mbox_buf.tags[0] = MBOX_TAG_VC_FW_REV; /* tag identifier */
+     mbox_buf.tags[1] = 4;                  /* value buffer size (bytes) */
+     mbox_buf.tags[2] = MBOX_REQUEST;       /* request code */
      mbox_buf.tags[3] = 0;                  /* value buffer */
-     mbox_buf.tags[4] = 0;
-     mbox_buf.tags[5] = MBOX_TAG_LAST;
+
+     mbox_buf.tags[4] = MBOX_TAG_BRD_MODEL;
+     mbox_buf.tags[5] = 4;
+     mbox_buf.tags[6] = MBOX_REQUEST;
+     mbox_buf.tags[7] = 0;
+
+     mbox_buf.tags[8] = MBOX_TAG_BRD_REVSN;
+     mbox_buf.tags[9] = 4;
+     mbox_buf.tags[10] = MBOX_REQUEST;
+     mbox_buf.tags[11] = 0;
+
+     mbox_buf.tags[12] = MBOX_TAG_MAC_ADDRS;
+     mbox_buf.tags[13] = 8;
+     mbox_buf.tags[14] = MBOX_REQUEST;
+     mbox_buf.tags[15] = 0;
+     mbox_buf.tags[16] = 0;
+
+     mbox_buf.tags[17] = MBOX_TAG_BRD_SRIAL;
+     mbox_buf.tags[18] = 8;
+     mbox_buf.tags[19] = MBOX_REQUEST;
+     mbox_buf.tags[20] = 0;
+     mbox_buf.tags[21] = 0;
+
+     mbox_buf.tags[22] = MBOX_TAG_ARM_MEMRY;
+     mbox_buf.tags[23] = 8;
+     mbox_buf.tags[24] = MBOX_REQUEST;
+     mbox_buf.tags[25] = 0;
+     mbox_buf.tags[26] = 0;
+
+     mbox_buf.tags[27] = MBOX_TAG_VC_MEMORY;
+     mbox_buf.tags[28] = 8;
+     mbox_buf.tags[29] = MBOX_REQUEST;
+     mbox_buf.tags[30] = 0;
+     mbox_buf.tags[31] = 0;
+
+     mbox_buf.tags[32] = MBOX_TAG_LAST;
 
      mailbox_property_call();
 
-     ret = (((unsigned long) mbox_buf.tags[4]) << 32) | mbox_buf.tags[3];
-     return ret;
+     sysinfo.vc_fw_rev = mbox_buf.tags[3];
+     sysinfo.brd_model = mbox_buf.tags[7];
+     sysinfo.brd_rev = mbox_buf.tags[11];
+     /* FIXME reverse endian here */
+     sysinfo.mac_addr = (((unsigned long) mbox_buf.tags[16]) << 32) | mbox_buf.tags[15];
+     sysinfo.brd_serial = (((unsigned long) mbox_buf.tags[21]) << 32) | mbox_buf.tags[20];
+     sysinfo.arm_mem_base_addr = mbox_buf.tags[25];
+     sysinfo.arm_mem_size = mbox_buf.tags[26];
+     sysinfo.vc_mem_base_addr = mbox_buf.tags[30];
+     sysinfo.vc_mem_size = mbox_buf.tags[31];
+     return &sysinfo;
 }
 
 /* mailbox property call

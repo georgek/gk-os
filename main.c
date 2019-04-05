@@ -8,7 +8,7 @@ extern void init();
 
 void vanity()
 {
-     kprintf("\n"
+     kprintf(
 "       _\n"
 "  __ _| | __      ___  ___\n"
 " / _` | |/ /____ / _ \\/ __|\n"
@@ -19,29 +19,63 @@ void vanity()
 
 void main()
 {
-     unsigned long serial;
+     sysinfo_t *sysinfo;
      init();
 
      vanity();
 
-     serial = mbox_req_single_tag();
+     kprintf("System information:\n");
 
-     kprintf("Hello, world\n");
+     sysinfo = mbox_sysinfo();
 
-     kprintf("My serial number:\n");
-     kprinthex(serial);
+     kprintf("Videocore firmware revision:\n");
+     kprinthex(sysinfo->vc_fw_rev);
+     kprintf("\n");
+
+     kprintf("Board model:\n");
+     kprinthex(sysinfo->brd_model);
+     kprintf("\n");
+
+     kprintf("Board revision:\n");
+     kprinthex(sysinfo->brd_rev);
+     kprintf("\n");
+
+     kprintf("MAC address (wrong endian):\n");
+     kprinthex(sysinfo->mac_addr >> 32);
+     kprinthex(sysinfo->mac_addr);
+     kprintf("\n");
+
+     kprintf("Board serial number:\n");
+     kprinthex(sysinfo->brd_serial >> 32);
+     kprinthex(sysinfo->brd_serial);
+     kprintf("\n");
+
+     kprintf("ARM memory base address:\n");
+     kprinthex(sysinfo->arm_mem_base_addr);
+     kprintf("\n");
+
+     kprintf("ARM memory size:\n");
+     kprinthex(sysinfo->arm_mem_size);
+     kprintf("\n");
+
+     kprintf("VideoCore memory base address:\n");
+     kprinthex(sysinfo->vc_mem_base_addr);
+     kprintf("\n");
+
+     kprintf("VideoCore memory size:\n");
+     kprinthex(sysinfo->vc_mem_size);
      kprintf("\n");
 
      kprintf("unsigned short:\n");
-     kprinthex(sizeof(unsigned short));
+     kputc('0' + sizeof(unsigned short));
      kprintf("\n");
 
      kprintf("unsigned int:\n");
-     kprinthex(sizeof(unsigned int));
+     kputc('0' + sizeof(unsigned int));
      kprintf("\n");
 
      kprintf("unsigned long:\n");
-     kprinthex(sizeof(unsigned long));
+     kputc('0' + sizeof(unsigned long));
      kprintf("\n");
 
      while(1) {
