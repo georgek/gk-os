@@ -5,7 +5,7 @@ OBJS = $(SRCS:.c=.o)
 CFLAGS = -Wall -O0 -ffreestanding -nostdinc -nostdlib -nostartfiles
 VPATH = raspi
 
-all: kernel8.img
+all: clean kernel8.img
 
 start.o: start.s
 	aarch64-elf-gcc $(CFLAGS) -c $< -o $@

@@ -6,6 +6,17 @@
 
 extern void kputc(char);
 
+void kprinthex(unsigned long d)
+{
+     unsigned char c;
+     int i;
+     for (i = 60; i >= 0; i -= 4) {
+          c = (d >> i) & 0xF;
+          c += c > 9 ? 0x37 : 0x30;
+          kputc(c);
+     }
+}
+
 /* very basic printf that uses polled IO */
 void kprintf(char *s)
 {
