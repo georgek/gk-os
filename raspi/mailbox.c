@@ -78,6 +78,7 @@ unsigned long mbox_req_single_tag(unsigned int tag)
      mbox_buf.tags[2] = 0;                  /* request code */
      mbox_buf.tags[3] = 0;                  /* value buffer */
      mbox_buf.tags[4] = 0;
+     mbox_buf.tags[5] = MBOX_TAG_LAST;
 
      mailbox_property_call();
 
