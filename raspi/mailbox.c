@@ -59,24 +59,29 @@
 
 
 /* static message buffer for mailbox communication */
-unsigned int volatile __attribute__((aligned(16))) mailbox_buffer[36];
+struct {
+     unsigned int buf_size;
+     unsigned int req_code;
+     unsigned int tags[34];
+} volatile __attribute__((aligned(16))) mbox_buf;
 
-unsigned long mbox_get_serial_number()
+
+unsigned long mbox_req_single_tag(unsigned int tag)
 {
      unsigned long ret;
 
-     mailbox_buffer[0] = 8*4;          /* buffer size (bytes) */
-     mailbox_buffer[1] = MBOX_REQUEST; /* request code */
+     mbox_buf.buf_size = 8*4;
+     mbox_buf.req_code = MBOX_REQUEST;
      /* sequence of tags */
-     mailbox_buffer[2] = MBOX_TAG_GETSERIAL; /* tag identifier */
-     mailbox_buffer[3] = 8;                  /* value buffer size (bytes) */
-     mailbox_buffer[4] = 0;                  /* request code */
-     mailbox_buffer[5] = 0;                  /* value buffer */
-     mailbox_buffer[6] = 0;
+     mbox_buf.tags[0] = MBOX_TAG_GETSERIAL; /* tag identifier */
+     mbox_buf.tags[1] = 8;                  /* value buffer size (bytes) */
+     mbox_buf.tags[2] = 0;                  /* request code */
+     mbox_buf.tags[3] = 0;                  /* value buffer */
+     mbox_buf.tags[4] = 0;
 
      mailbox_property_call();
 
-     ret = (((unsigned long) mailbox_buffer[6]) << 32) | mailbox_buffer[5];
+     ret = (((unsigned long) mbox_buf.tags[4]) << 32) | mbox_buf.tags[3];
      return ret;
 }
 
@@ -87,13 +92,13 @@ unsigned long mbox_get_serial_number()
 int mailbox_property_call()
 {
      unsigned int message;
-     mailbox_write(MBOX_CH_PROP, (unsigned long) &mailbox_buffer);
+     mailbox_write(MBOX_CH_PROP, (unsigned long) &mbox_buf);
      while (1) {
           message = mailbox_read(MBOX_CH_PROP);
           /* if this is our response the returned value will be the same */
-          if ((message & ~0xF) == (((unsigned long) &mailbox_buffer) & ~0xF)) {
+          if ((message & ~0xF) == (((unsigned long) &mbox_buf) & ~0xF)) {
                /* check if the request was successful */
-               return mailbox_buffer[1] == MBOX_PROP_SUCC;
+               return mbox_buf.req_code == MBOX_PROP_SUCC;
           }
      }
 }

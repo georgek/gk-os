@@ -11,7 +11,7 @@ void main()
      unsigned long serial;
      init();
 
-     serial = mbox_get_serial_number();
+     serial = mbox_req_single_tag();
 
      kprintf("Hello, world\n");
 
