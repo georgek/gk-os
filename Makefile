@@ -18,4 +18,4 @@ kernel8.img: start.o $(OBJS)
 	aarch64-elf-objcopy -O binary kernel8.elf $@
 
 clean:
-	rm -f kernel8.img kernel8.elf *.o
+	rm -f kernel8.img kernel8.elf $(OBJS)

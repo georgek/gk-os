@@ -25,8 +25,21 @@
 #define MBOX_TAG_BRD_SRIAL      0x10004
 #define MBOX_TAG_ARM_MEMRY      0x10005
 #define MBOX_TAG_VC_MEMORY      0x10006
+#define MBOX_TAG_SETCLKRTE      0x38002
 #define MBOX_TAG_CMDLINE        0x50001
 #define MBOX_TAG_LAST           0
+
+/* clock ids */
+#define MBOX_CLK_EMMC           0x1
+#define MBOX_CLK_UART           0x2
+#define MBOX_CLK_ARM            0x3
+#define MBOX_CLK_CORE           0x4
+#define MBOX_CLK_V3D            0x5
+#define MBOX_CLK_H264           0x6
+#define MBOX_CLK_ISP            0x7
+#define MBOX_CLK_SDRAM          0x8
+#define MBOX_CLK_PIXEL          0x9
+#define MBOX_CLK_PWM            0xA
 
 typedef struct {
      unsigned int vc_fw_rev;
@@ -40,6 +53,7 @@ typedef struct {
      unsigned int vc_mem_size;
 } sysinfo_t;
 
+void mbox_set_clock_rate(unsigned int clock_id, unsigned int rate, int turbo);
 char *mbox_cmdline();
 sysinfo_t *mbox_sysinfo();
 int mailbox_property_call();

@@ -51,6 +51,27 @@ struct {
 
 sysinfo_t sysinfo;
 
+/* set clock rate of clock */
+void mbox_set_clock_rate(
+     unsigned int clock_id,
+     unsigned int rate,
+     int turbo)
+{
+     mbox_buf.buf_size = 9*4;
+     mbox_buf.req_code = MBOX_REQUEST;
+
+     mbox_buf.tags[0] = MBOX_TAG_SETCLKRTE;
+     mbox_buf.tags[1] = 3*4;
+     mbox_buf.tags[2] = MBOX_REQUEST;
+     mbox_buf.tags[3] = clock_id;
+     mbox_buf.tags[4] = rate;
+     mbox_buf.tags[5] = turbo;
+
+     mbox_buf.tags[6] = MBOX_TAG_LAST;
+
+     mailbox_property_call();
+}
+
 /* this returns a variable length string */
 char *mbox_cmdline()
 {
