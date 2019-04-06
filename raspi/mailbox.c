@@ -51,6 +51,34 @@ struct {
 
 sysinfo_t sysinfo;
 
+/* this returns a variable length string */
+char *mbox_cmdline()
+{
+     int i;
+     char *ret;
+
+     mbox_buf.buf_size = 36*4;
+     mbox_buf.req_code = MBOX_REQUEST;
+
+     mbox_buf.tags[0] = MBOX_TAG_CMDLINE;
+     mbox_buf.tags[1] = 30*4;
+     mbox_buf.tags[2] = MBOX_REQUEST;
+     /* clear output buffer */
+     for (i = 0; i < 30; i++) {
+          mbox_buf.tags[3+i] = 0;
+     }
+     mbox_buf.tags[33] = MBOX_TAG_LAST;
+
+     mailbox_property_call();
+
+     ret = (char *) &mbox_buf.tags[3];
+     /* make it's null terminated */
+     ret[30*4-1] = '\0';
+
+     return ret;
+}
+
+/* get all of the system information in one request */
 sysinfo_t *mbox_sysinfo(unsigned int tag)
 {
      mbox_buf.buf_size = 35*4;

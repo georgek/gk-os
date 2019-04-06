@@ -20,6 +20,7 @@ void vanity()
 void main()
 {
      sysinfo_t *sysinfo;
+     char *cmdline;
      init();
 
      vanity();
@@ -76,6 +77,11 @@ void main()
 
      kprintf("unsigned long:\n");
      kputc('0' + sizeof(unsigned long));
+     kprintf("\n");
+
+     cmdline = mbox_cmdline();
+     kprintf("Command line:\n");
+     kprintf(cmdline);
      kprintf("\n");
 
      while(1) {
