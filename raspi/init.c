@@ -8,6 +8,7 @@
 #include "aux.h"
 #include "mailbox.h"
 #include "pl011.h"
+#include "delays.h"
 
 /* initialise the PL011 uart and set GPIO pins 14 and 15 to use it */
 void uart0_init()
@@ -24,13 +25,9 @@ void uart0_init()
      r |=   (4<<12) | (4<<15);  /* set gpio 14, 15 to alt0 */
      *GPFSEL1 = r;
      *GPPUD = 0;                /* disable pull up/down... */
-     for (r = 150; r > 0; r--) {
-          asm volatile("nop");
-     }
+     wait_cycles(150);
      *GPPUDCLK0 = (1<<14)|(1<<15); /* ...for pins 14, 15 */
-     for (r = 150; r > 0; r--) {
-          asm volatile("nop");
-     }
+     wait_cycles(150);
      *GPPUDCLK0 = 0;            /* flush GPIO setup */
 
      *UART0_ICR = 0x7E0;        /* clear interrupts */
@@ -59,13 +56,9 @@ void uart1_init()
      r |=   (2<<12) | (2<<15);  /* set gpio 14, 15 to alt5 */
      *GPFSEL1 = r;
      *GPPUD = 0;                /* disable pull up/down... */
-     for (r = 150; r > 0; r--) {
-          asm volatile("nop");
-     }
+     wait_cycles(150);
      *GPPUDCLK0 = (1<<14)|(1<<15); /* ...for pins 14, 15 */
-     for (r = 150; r > 0; r--) {
-          asm volatile("nop");
-     }
+     wait_cycles(150);
      *GPPUDCLK0 = 0;            /* flush GPIO setup */
      *AUX_MU_CNTL = 3;          /* enable Tx, Rx */
 }

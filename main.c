@@ -2,6 +2,7 @@
 
 #include "kio.h"
 #include "raspi/mailbox.h"
+#include "raspi/delays.h"
 
 /* this function does any hardware initialisation */
 extern void init();
@@ -97,6 +98,10 @@ void main()
      kprintf("Current Exception Level:\n");
      kprinthex((el >> 2) & 3);
      kprintf("\n");
+
+     kprintf("Waiting 1000000 cycles...\n");
+     wait_cycles(1000000);
+     kprintf("Done.\n");
 
      while(1) {
           kputc(kgetc());

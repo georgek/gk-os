@@ -2,9 +2,9 @@
  * before the code
  */
 
-.section ".text.boot"
+        .section ".text.boot"
 
-.global _start
+        .global _start
 
 _start:
         mrs     x1, mpidr_el1
