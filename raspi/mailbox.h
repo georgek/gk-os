@@ -25,6 +25,7 @@
 #define MBOX_TAG_BRD_SRIAL      0x10004
 #define MBOX_TAG_ARM_MEMRY      0x10005
 #define MBOX_TAG_VC_MEMORY      0x10006
+#define MBOX_TAG_GETCLKRTE      0x30002
 #define MBOX_TAG_SETCLKRTE      0x38002
 #define MBOX_TAG_CMDLINE        0x50001
 #define MBOX_TAG_LAST           0
@@ -53,6 +54,7 @@ typedef struct {
      unsigned int vc_mem_size;
 } sysinfo_t;
 
+unsigned int mbox_get_clock_rate(unsigned int clock_id);
 void mbox_set_clock_rate(unsigned int clock_id, unsigned int rate, int turbo);
 char *mbox_cmdline();
 sysinfo_t *mbox_sysinfo();

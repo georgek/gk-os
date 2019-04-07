@@ -22,6 +22,7 @@ void main()
      sysinfo_t *sysinfo;
      char *cmdline;
      unsigned long el;
+     unsigned int arm_clock_rate;
      init();
 
      vanity();
@@ -83,6 +84,11 @@ void main()
      cmdline = mbox_cmdline();
      kprintf("Command line:\n");
      kprintf(cmdline);
+     kprintf("\n");
+
+     arm_clock_rate = mbox_get_clock_rate(MBOX_CLK_ARM);
+     kprintf("ARM clock rate (Hz):\n");
+     kprinthex(arm_clock_rate);
      kprintf("\n");
 
      asm volatile("mrs %0, CurrentEL"
