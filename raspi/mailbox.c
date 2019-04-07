@@ -17,6 +17,7 @@
 
 #include "gpio.h"
 #include "mailbox.h"
+#include "delays.h"
 
 /* mailbox registers */
 #define VIDEOCORE_MBOX  (MMIO_BASE+0x0000B880)
@@ -211,9 +212,7 @@ void mailbox_write(unsigned char channel, unsigned int data)
      message |= data & ~0xF;
 
      /* wait until mailbox is not full */
-     while (*MBOX_1_STATUS & MBOX_FULL) {
-          asm volatile("nop");
-     }
+     WAIT_WHILE(*MBOX_1_STATUS & MBOX_FULL);
      *MBOX_1_RW = message;
 }
 
@@ -227,9 +226,7 @@ unsigned int mailbox_read(unsigned char channel)
      unsigned int message;
      /* keep reading until we get a message on the desired channel */
      while (1) {
-          while (*MBOX_0_STATUS & MBOX_EMPTY) {
-               asm volatile("nop");
-          }
+          WAIT_WHILE(*MBOX_0_STATUS & MBOX_EMPTY);
           message = *MBOX_0_RW;
           if ((message & 0xF) == channel) {
                return message;
