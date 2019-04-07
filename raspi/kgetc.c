@@ -28,5 +28,9 @@ char uart1_getc()
 
 char kgetc()
 {
+#ifdef UART1
+     return uart1_getc();
+#else
      return uart0_getc();
+#endif
 }

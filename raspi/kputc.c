@@ -24,5 +24,9 @@ void uart1_putc(char c)
 
 void kputc(char c)
 {
+#ifdef UART1
+     uart1_putc(c);
+#else
      uart0_putc(c);
+#endif
 }

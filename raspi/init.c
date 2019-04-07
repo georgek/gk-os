@@ -65,5 +65,9 @@ void uart1_init()
 
 void init()
 {
+#ifdef UART1
+     uart1_init();
+#else
      uart0_init();
+#endif
 }
