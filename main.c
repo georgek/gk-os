@@ -21,6 +21,7 @@ void main()
 {
      sysinfo_t *sysinfo;
      char *cmdline;
+     unsigned long el;
      init();
 
      vanity();
@@ -82,6 +83,13 @@ void main()
      cmdline = mbox_cmdline();
      kprintf("Command line:\n");
      kprintf(cmdline);
+     kprintf("\n");
+
+     asm volatile("mrs %0, CurrentEL"
+                  : "=r" (el)
+          );
+     kprintf("Current Exception Level:\n");
+     kprinthex((el >> 2) & 3);
      kprintf("\n");
 
      while(1) {
