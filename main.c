@@ -22,8 +22,10 @@ void main()
 {
      sysinfo_t *sysinfo;
      char *cmdline;
-     unsigned long el;
+     unsigned long el, time1, time2;
      unsigned int arm_clock_rate;
+     int i;
+
      init();
 
      vanity();
@@ -45,12 +47,10 @@ void main()
      kprintf("\n");
 
      kprintf("MAC address (wrong endian):\n");
-     kprinthex(sysinfo->mac_addr >> 32);
      kprinthex(sysinfo->mac_addr);
      kprintf("\n");
 
      kprintf("Board serial number:\n");
-     kprinthex(sysinfo->brd_serial >> 32);
      kprinthex(sysinfo->brd_serial);
      kprintf("\n");
 
@@ -71,15 +71,15 @@ void main()
      kprintf("\n");
 
      kprintf("unsigned short:\n");
-     kputc('0' + sizeof(unsigned short));
+     kprintdec(sizeof(unsigned short));
      kprintf("\n");
 
      kprintf("unsigned int:\n");
-     kputc('0' + sizeof(unsigned int));
+     kprintdec(sizeof(unsigned int));
      kprintf("\n");
 
      kprintf("unsigned long:\n");
-     kputc('0' + sizeof(unsigned long));
+     kprintdec(sizeof(unsigned long));
      kprintf("\n");
 
      cmdline = mbox_cmdline();
@@ -89,7 +89,7 @@ void main()
 
      arm_clock_rate = mbox_get_clock_rate(MBOX_CLK_ARM);
      kprintf("ARM clock rate (Hz):\n");
-     kprinthex(arm_clock_rate);
+     kprintdec(arm_clock_rate);
      kprintf("\n");
 
      asm volatile("mrs %0, CurrentEL"
