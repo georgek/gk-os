@@ -99,9 +99,26 @@ void main()
      kprinthex((el >> 2) & 3);
      kprintf("\n");
 
-     kprintf("Waiting 1000000 cycles...\n");
-     wait_cycles(1000000);
+     time1 = get_system_time();
+     kprintf("Current system time:\n");
+     kprintdec(time1);
+     kprintf("\n");
+
+     kprintf("Waiting 1200000 cycles...\n");
+     time1 = get_system_time();
+     wait_cycles(1200000);
+     time2 = get_system_time();
      kprintf("Done.\n");
+
+     kprintf("Time taken to wait:\n");
+     kprintdec(time2 - time1);
+     kprintf("\n");
+
+
+     time1 = get_system_time();
+     kprintf("Current system time:\n");
+     kprintdec(time1);
+     kprintf("\n");
 
      while(1) {
           kputc(kgetc());
