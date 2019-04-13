@@ -44,6 +44,10 @@ el2:    cmp     x0, #4
         mov     x0, #(1 << 31)  // aarch64
         orr     x0, x0, #(1 << 1) // SWIO hardwired on Pi3
         msr     hcr_el2, x0
+        // set up sctlr_el1
+        mrs     x0, sctlr_el1
+        orr     x0, x0, #(1 << 12) // enable instruction cache
+        msr     sctlr_el1, x0
         // change to EL1
         mov     x2, #0x3c4
         msr     spsr_el2, x2
