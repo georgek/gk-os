@@ -51,6 +51,26 @@ void kprinthex(unsigned long d)
      }
 }
 
+void kprintbits(unsigned long d)
+{
+     int i;
+     unsigned long m;
+
+     for (i = 63; i >= 0; i--) {
+          kputc('0' + i/10);
+     }
+     kputc('\n');
+     kputc('\r');
+     for (i = 63; i >= 0; i--) {
+          kputc('0' + i%10);
+     }
+     kputc('\n');
+     kputc('\r');
+     for (m = 1l << 63; m != 0; m >>= 1) {
+          kputc(d & m ? '1' : '0');
+     }
+}
+
 /* very basic printf that uses polled IO */
 void kprintf(char *s)
 {
