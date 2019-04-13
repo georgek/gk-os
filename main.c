@@ -24,7 +24,6 @@ void main()
      char *cmdline;
      unsigned long el, time1, time2;
      unsigned int arm_clock_rate;
-     int i;
 
      init();
 
@@ -87,8 +86,8 @@ void main()
      kprintf(cmdline);
      kprintf("\n");
 
-     arm_clock_rate = mbox_get_clock_rate(MBOX_CLK_ARM);
-     kprintf("ARM clock rate (Hz):\n");
+     arm_clock_rate = mbox_get_clock_rate(MBOX_CLK_ARM)/1000000;
+     kprintf("ARM clock rate (MHz):\n");
      kprintdec(arm_clock_rate);
      kprintf("\n");
 
@@ -104,7 +103,7 @@ void main()
      kprintdec(time1);
      kprintf("\n");
 
-     kprintf("Waiting 1200000 cycles...\n");
+     kprintf("Waiting 1200000 instructions...\n");
      time1 = get_system_time();
      wait_cycles(1200000);
      time2 = get_system_time();
@@ -114,10 +113,15 @@ void main()
      kprintdec(time2 - time1);
      kprintf("\n");
 
+     kprintf("Cycles per instruction:\n");
+     kprintdec((arm_clock_rate*(time2-time1))/1200000);
+     kprintf("\n");
 
-     time1 = get_system_time();
-     kprintf("Current system time:\n");
-     kprintdec(time1);
+     asm volatile("mrs %0, sctlr_el1"
+                  : "=r" (el)
+          );
+     kprintf("sctlr_el1:\n");
+     kprintbits(el);
      kprintf("\n");
 
      while(1) {
