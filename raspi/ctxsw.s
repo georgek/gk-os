@@ -29,7 +29,10 @@ ctxsw:
         stp     x24, x25, [sp, #192]
         stp     x26, x27, [sp, #208]
         stp     x28, x29, [sp, #224]
-        str     x30,      [sp, #240]
+        stp     x30, x30, [sp, #240]
+        // the second x30 is the place we will jump to
+        // this is so create can set different x30 independently of where
+        // to start the process from
 
         // switch stacks
         mov     x9, sp
@@ -53,8 +56,8 @@ ctxsw:
         ldp     x24, x25, [sp, #192]
         ldp     x26, x27, [sp, #208]
         ldp     x28, x29, [sp, #224]
-        ldr     x30,      [sp, #240]
+        ldp     x30, x9,  [sp, #240] // clobber x9, it's allowed
         add     sp,  sp,  #256
 
         // return to new process
-        ret
+        ret     x9
