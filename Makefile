@@ -1,7 +1,7 @@
 # gk-os
 
 SRCS := $(wildcard *.c) $(wildcard */*.c)
-ASM := start.s raspi/wait_cycles.s
+ASM := $(wildcard *.s) $(wildcard */*.s)
 OBJS := $(SRCS:.c=.o) $(ASM:.s=.o)
 CFLAGS := -Wall -O0 -ffreestanding -nostdinc -nostdlib -nostartfiles
 VPATH := raspi

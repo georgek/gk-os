@@ -3,6 +3,7 @@
 #include "kio.h"
 #include "raspi/mailbox.h"
 #include "raspi/delays.h"
+#include "scheduler.h"
 
 /* this function does any hardware initialisation */
 extern void init();
@@ -123,6 +124,8 @@ void main()
      kprintf("sctlr_el1:\n");
      kprintbits(el);
      kprintf("\n");
+
+     concurrent();
 
      while(1) {
           kputc(kgetc());
