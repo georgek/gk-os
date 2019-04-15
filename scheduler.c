@@ -28,7 +28,7 @@ void func1()
           kprintf("func1: ");
           kprintdec(i);
           kprintf("\n");
-          ctxsw(&stack1, &stack2);
+          ctxsw(&stack1, &this_stack);
      }
      kprintf("func1 done.\n");
 }
@@ -41,7 +41,7 @@ void func2()
           kprintf("func2: ");
           kprintdec(i);
           kprintf("\n");
-          ctxsw(&stack2, &stack1);
+          ctxsw(&stack2, &this_stack);
      }
      kprintf("func2 done.\n");
 }
