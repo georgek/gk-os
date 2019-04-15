@@ -47,6 +47,7 @@ el2:    cmp     x0, #4
         // set up sctlr_el1
         mrs     x0, sctlr_el1
         orr     x0, x0, #(1 << 12) // enable instruction cache
+        orr     x0, x0, #(1 << 2)  // enable data cache
         msr     sctlr_el1, x0
         // change to EL1
         mov     x2, #0x3c4
